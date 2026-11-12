@@ -102,30 +102,89 @@
   }
   // devis : pré-remplissage depuis le simulateur (?finition=…&simulation=photo|demo)
   const qp = new URLSearchParams(location.search), fin = qp.get('finition');
+  // photo de la simulation (déposée par simu.js en sessionStorage quand le visiteur clique « Demander un devis »)
+  let simuShot = null;
+  try { simuShot = JSON.parse(sessionStorage.getItem('alpaero-simu') || 'null'); } catch (e) {}
+  if (simuShot && (!fin || simuShot.finition !== fin)) simuShot = null;
+
   if (fin) $$('[data-form]').forEach(f => {
     const ta = f.querySelector('textarea[name=description]'), sel = f.querySelector('select[name=prestation]');
-    if (ta && !ta.value) ta.value = 'Simulation faite sur le site : finition souhaitée « ' + fin + ' ».' + (qp.get('simulation') === 'photo' ? ' Je joins la photo de mon bois à cet email.' : '') + '\n\nMon projet : ';
+    if (ta && !ta.value) ta.value = 'Simulation faite sur le site : finition souhaitée « ' + fin + ' ».\n\nMon projet : ';
     const want = qp.get('prestation') || 'Aérogommage de meubles';
     if (sel) [...sel.options].forEach(o => { if (o.text === want) sel.value = o.value || o.text; });
+    const hf = f.querySelector('input[name=finition]'); if (hf) hf.value = fin;
+    const box = f.querySelector('.f-simu');
+    if (box && simuShot) {
+      box.hidden = false;
+      box.innerHTML = `<img src="${simuShot.before}" alt="Votre photo"><img src="${simuShot.after}" alt="Votre simulation"><p><b>Votre photo et votre simulation sont jointes</b><span>Finition : ${fin.replace(/</g, '')}</span></p><button type="button" aria-label="Retirer la photo de la simulation">✕</button>`;
+      box.querySelector('button').addEventListener('click', () => { simuShot = null; box.hidden = true; try { sessionStorage.removeItem('alpaero-simu'); } catch (e) {} });
+    }
   });
 
-  // forms: validate; send to endpoint if set, else open the visitor's mail app pre-filled
-  $$('[data-form]').forEach(f => f.addEventListener('submit', async e => {
-    e.preventDefault();
-    const msg = f.querySelector('.f-msg'); let ok = true;
-    $$('[required]', f).forEach(i => { const bad = !i.value.trim() || (i.type === 'tel' && i.value.replace(/\D/g, '').length < 9); i.classList.toggle('bad', bad); if (bad && ok) { i.focus(); ok = false; } });
-    const em = f.querySelector('[type=email]'); if (em && em.value && !/^\S+@\S+\.\S+$/.test(em.value)) { em.classList.add('bad'); ok = false; }
-    msg.hidden = false; msg.className = 'f-msg' + (ok ? '' : ' err');
-    if (!ok) { msg.textContent = 'Merci de compléter les champs obligatoires.'; return; }
-    const data = Object.fromEntries(new FormData(f));
-    if (f.action && f.getAttribute('action')) {
-      try { const r = await fetch(f.action, { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } }); if (!r.ok) throw 0; f.reset(); msg.textContent = 'Merci ! Votre demande est envoyée — réponse sous 24h.'; }
-      catch { msg.className = 'f-msg err'; msg.textContent = 'L’envoi a échoué. Appelez-nous au 06 10 50 89 82.'; }
-      return;
+  // photos ajoutées : aperçu + réduction avant envoi (photos de téléphone : 4–8 Mo → ~400 Ko)
+  const MAX_PHOTOS = 6;
+  const shrink = (file, max = 1600) => new Promise(res => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
+      c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+      c.toBlob(b => res(b ? new File([b], (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' }) : null), 'image/jpeg', 0.82);
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); res(file.size < 5e6 && /^image\//.test(file.type) ? file : null); }; // ex. HEIC sur Chrome : envoyée telle quelle si < 5 Mo
+    im.src = u;
+  });
+  const dataUrlFile = (d, name) => { const [h, b] = d.split(','); const bin = atob(b), a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return new File([a], name, { type: (h.match(/:(.*?);/) || [])[1] || 'image/jpeg' }); };
+
+  $$('[data-form]').forEach(f => {
+    const t = f.querySelector('input[name=t]'); if (t) t.value = Date.now();
+    const inp = f.querySelector('input[name=photos]'), thumbs = f.querySelector('.f-thumbs');
+    let picked = [];
+    const paint = () => {
+      thumbs.hidden = !picked.length;
+      thumbs.innerHTML = picked.map((p, i) => `<span><img src="${p.url}" alt=""><button type="button" data-i="${i}" aria-label="Retirer cette photo">✕</button></span>`).join('');
+    };
+    if (inp) {
+      inp.addEventListener('change', () => {
+        [...inp.files].forEach(file => { if (picked.length < MAX_PHOTOS) picked.push({ file, url: URL.createObjectURL(file) }); });
+        inp.value = ''; paint();
+      });
+      thumbs.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const [p] = picked.splice(+b.dataset.i, 1); URL.revokeObjectURL(p.url); paint(); });
     }
-    const L = { prenom: 'Prénom', nom: 'Nom', telephone: 'Téléphone', email: 'Email', prestation: 'Prestation', localisation: 'Localisation', description: 'Projet' };
-    const body = Object.entries(data).filter(([, v]) => v).map(([k, v]) => `${L[k] || k} : ${v}`).join('\n');
-    location.href = `mailto:alpaero05@gmail.com?subject=${encodeURIComponent('Demande de devis — ' + (data.prenom || '') + ' ' + (data.nom || ''))}&body=${encodeURIComponent(body + '\n\n(Vous pouvez joindre vos photos à cet email.)')}`;
-    msg.textContent = 'Votre messagerie s’ouvre avec la demande pré-remplie : il ne reste qu’à l’envoyer (et joindre vos photos).';
-  }));
+
+    // validation, puis envoi direct (Worker) ; en cas d'échec, repli sur la messagerie du visiteur
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const msg = f.querySelector('.f-msg'), btn = f.querySelector('button[type=submit]'); let ok = true;
+      $$('[required]', f).forEach(i => { const bad = !i.value.trim() || (i.type === 'tel' && i.value.replace(/\D/g, '').length < 9); i.classList.toggle('bad', bad); if (bad && ok) { i.focus(); ok = false; } });
+      const em = f.querySelector('[type=email]'); if (em && em.value && !/^\S+@\S+\.\S+$/.test(em.value)) { em.classList.add('bad'); ok = false; }
+      msg.hidden = false; msg.className = 'f-msg' + (ok ? '' : ' err');
+      if (!ok) { msg.textContent = 'Merci de compléter les champs obligatoires.'; return; }
+      const data = Object.fromEntries([...new FormData(f)].filter(([, v]) => typeof v === 'string'));
+      if (f.getAttribute('action')) {
+        btn.disabled = true; msg.textContent = picked.length || simuShot ? 'Envoi en cours (photos comprises)…' : 'Envoi en cours…';
+        try {
+          const body = new FormData();
+          Object.entries(data).forEach(([k, v]) => body.append(k, v));
+          if (simuShot) { body.append('photos', dataUrlFile(simuShot.before, 'photo-client.jpg')); body.append('photos', dataUrlFile(simuShot.after, 'simulation-' + (simuShot.key || 'finition') + '.jpg')); }
+          for (const p of picked.slice(0, MAX_PHOTOS - (simuShot ? 2 : 0))) { const s = await shrink(p.file); if (s) body.append('photos', s); }
+          const r = await fetch(f.getAttribute('action'), { method: 'POST', body, headers: { Accept: 'application/json' } });
+          const j = await r.json().catch(() => ({}));
+          if (!r.ok || !j.ok) throw new Error(j.error || r.status);
+          f.reset(); picked.forEach(p => URL.revokeObjectURL(p.url)); picked = []; if (thumbs) paint();
+          const sb = f.querySelector('.f-simu'); if (sb) sb.hidden = true; try { sessionStorage.removeItem('alpaero-simu'); } catch (e2) {}
+          if (t) t.value = Date.now();
+          msg.textContent = 'Merci ! Votre demande est bien envoyée à Nico. Réponse sous 24h.';
+          return;
+        } catch (err) {
+          if (String(err.message) === 'rate') { msg.className = 'f-msg err'; msg.textContent = 'Trop d’envois d’affilée. Réessayez dans une minute ou appelez le 06 10 50 89 82.'; return; }
+          // repli : messagerie du visiteur (la demande n'est jamais perdue)
+        } finally { btn.disabled = false; }
+      }
+      const L = { prenom: 'Prénom', nom: 'Nom', telephone: 'Téléphone', email: 'Email', prestation: 'Prestation', localisation: 'Localisation', finition: 'Finition', description: 'Projet' };
+      const body = Object.entries(data).filter(([k, v]) => v && L[k]).map(([k, v]) => `${L[k]} : ${v}`).join('\n');
+      location.href = `mailto:alpaero05@gmail.com?subject=${encodeURIComponent('Demande de devis — ' + (data.prenom || '') + ' ' + (data.nom || ''))}&body=${encodeURIComponent(body + '\n\n(Vous pouvez joindre vos photos à cet email.)')}`;
+      msg.className = 'f-msg'; msg.textContent = 'L’envoi direct n’a pas abouti : votre messagerie s’ouvre avec la demande pré-remplie, il ne reste qu’à l’envoyer.';
+    });
+  });
 })();

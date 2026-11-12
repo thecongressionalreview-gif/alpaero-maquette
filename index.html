@@ -23,40 +23,42 @@
 <a class="hero-tel" href="tel:+33610508982"><span class="dot"></span>Intervention dans les Hautes-Alpes et départements voisins <b>06 10 50 89 82 — Devis gratuit</b></a>
 </section><div class="ticker" aria-hidden="true"><div><span>Sablage de chalets</span><span>Aérogommage de meubles</span><span>Métal & pierre</span><span>Sans produits chimiques</span><span>Devis gratuit sous 24h</span><span>Hautes-Alpes</span><span>Sablage de chalets</span><span>Aérogommage de meubles</span><span>Métal & pierre</span><span>Sans produits chimiques</span><span>Devis gratuit sous 24h</span><span>Hautes-Alpes</span></div></div>
 <section class="sec simu" id="simulateur-chalet"><div class="wrap">
-<div class="sec-hd"><p class="k">Simulateur · Chalets & terrasses</p><h2>Simulez le sablage de <em>votre chalet</em></h2><p>Prenez en photo votre façade, votre terrasse ou vos balcons en bois. Faites glisser le curseur pour voir le bois remis à nu, puis choisissez votre finition.</p></div>
+<div class="sec-hd"><p class="k">Simulateur · Chalets & terrasses</p><h2>Simulez le sablage de <em>votre chalet</em></h2><p>Prenez en photo votre façade, votre terrasse ou vos balcons en bois, choisissez une finition et décrivez votre souhait : vous voyez votre chalet remis à neuf.</p></div>
 <div class="simu-box" data-simu data-src="assets/js/simu.js" data-worker="assets/js/simu-worker.js" data-demo="assets/img/chalet-terrasse-2000.webp" data-prestation="Sablage de chalets">
-<figure class="ba simu-ba"><div class="ba-stage" style="--ar:1000/750">
-<img class="simu-after" src="assets/img/chalet-terrasse-2000.webp" alt="Simulation : chalet et terrasse après sablage" width="1000" height="750" loading="lazy" decoding="async">
-<div class="ba-b"><img class="simu-before" src="assets/img/chalet-terrasse-2000.webp" alt="Chalet et terrasse en bois, avant sablage" width="1000" height="750" loading="lazy" decoding="async"></div>
-<div class="ba-line" role="slider" tabindex="0" aria-label="Comparer avant et après la simulation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><span class="ba-knob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span></div>
-<span class="ba-tag ba-tl">Avant</span><span class="ba-tag ba-tr">Après</span><span class="simu-spin" aria-hidden="true"></span></div>
-<figcaption class="simu-cap">Photo de démonstration : chalet et terrasse en bois. Essayez avec votre façade, votre terrasse ou vos volets.</figcaption></figure>
+<figure class="simu-view"><div class="simu-stage" style="--ar:1000/750">
+<img class="simu-img" src="assets/img/chalet-terrasse-2000.webp" alt="Exemple de simulation : chalet et terrasse en bois après sablage" width="1000" height="750" loading="lazy" decoding="async">
+<span class="simu-badge">Exemple</span><span class="simu-spin"><span class="simu-prog">Simulation en cours…</span></span></div>
+<figcaption class="simu-cap">Exemple sur un chalet. Essayez avec votre façade, votre terrasse ou vos volets.</figcaption></figure>
 <div class="simu-side">
+<label class="btn btn-dark simu-up"><input type="file" accept="image/*" class="vh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>Choisir ma photo</label>
 <p class="simu-k">Finition</p>
 <div class="simu-fin" role="group" aria-label="Choisir une finition"></div>
-<label class="btn btn-dark simu-up"><input type="file" accept="image/*" class="vh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>Essayer avec ma photo</label>
+<label class="simu-wish"><span>Votre souhait <small>(facultatif)</small></span><textarea rows="2" maxlength="240" placeholder="Ex. : garde-corps un peu plus foncé, volets inchangés…"></textarea></label>
+<button type="button" class="btn btn-o simu-go">Lancer la simulation</button>
 <p class="simu-status" role="status" hidden></p>
-<a class="btn btn-o simu-cta" href="devis/"><span>Demander un devis pour cette finition</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-<p class="simu-legal">Simulation numérique réalisée à partir de votre photo, à titre indicatif. Le résultat réel dépend de l’essence du bois, de l’ancien revêtement et de l’abrasif utilisé.</p>
-<p class="simu-priv"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Votre photo reste sur votre appareil tant que vous n’envoyez pas de demande de devis.</p>
+<a class="btn btn-ghost simu-cta" href="devis/"><span>Demander un devis pour ce résultat</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<input name="site" class="vh" tabindex="-1" autocomplete="off" aria-hidden="true">
+<p class="simu-legal">Simulation réalisée par intelligence artificielle à partir de votre photo, à titre indicatif. Le résultat réel dépend de l’essence du bois, de l’ancien revêtement et de l’abrasif utilisé.</p>
+<p class="simu-priv"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Votre photo sert uniquement à créer la simulation : elle est envoyée à notre prestataire d’IA, n’est pas publiée et n’est pas conservée par Alp’Aero.</p>
 </div></div></div></section>
 <section class="sec simu alt" id="simulateur-meuble"><div class="wrap">
-<div class="sec-hd"><p class="k">Simulateur · Meubles & boiseries</p><h2>Simulez l’aérogommage de <em>votre meuble</em></h2><p>Faites glisser le curseur pour comparer votre bois verni avec le résultat après décapage, puis choisissez votre finition.</p></div>
+<div class="sec-hd"><p class="k">Simulateur · Meubles & boiseries</p><h2>Simulez l’aérogommage de <em>votre meuble</em></h2><p>Prenez en photo votre meuble, votre porte ou vos poutres, choisissez une finition et décrivez votre souhait : vous voyez le résultat après décapage.</p></div>
 <div class="simu-box" data-simu data-src="assets/js/simu.js" data-worker="assets/js/simu-worker.js" data-demo="assets/img/buffet-avant-2000.webp" data-prestation="Aérogommage de meubles">
-<figure class="ba simu-ba"><div class="ba-stage" style="--ar:1000/750">
-<img class="simu-after" src="assets/img/buffet-avant-2000.webp" alt="Simulation : buffet en pin après aérogommage" width="1000" height="750" loading="lazy" decoding="async">
-<div class="ba-b"><img class="simu-before" src="assets/img/buffet-avant-2000.webp" alt="Buffet en pin verni, avant aérogommage" width="1000" height="750" loading="lazy" decoding="async"></div>
-<div class="ba-line" role="slider" tabindex="0" aria-label="Comparer avant et après la simulation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><span class="ba-knob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></span></div>
-<span class="ba-tag ba-tl">Avant</span><span class="ba-tag ba-tr">Après</span><span class="simu-spin" aria-hidden="true"></span></div>
-<figcaption class="simu-cap">Photo de démonstration : buffet en pin verni. Essayez avec votre meuble, votre porte ou vos poutres.</figcaption></figure>
+<figure class="simu-view"><div class="simu-stage" style="--ar:1000/750">
+<img class="simu-img" src="assets/img/buffet-avant-2000.webp" alt="Exemple de simulation : buffet en pin après aérogommage" width="1000" height="750" loading="lazy" decoding="async">
+<span class="simu-badge">Exemple</span><span class="simu-spin"><span class="simu-prog">Simulation en cours…</span></span></div>
+<figcaption class="simu-cap">Exemple sur un buffet en pin verni. Essayez avec votre meuble, votre porte ou vos poutres.</figcaption></figure>
 <div class="simu-side">
+<label class="btn btn-dark simu-up"><input type="file" accept="image/*" class="vh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>Choisir ma photo</label>
 <p class="simu-k">Finition</p>
 <div class="simu-fin" role="group" aria-label="Choisir une finition"></div>
-<label class="btn btn-dark simu-up"><input type="file" accept="image/*" class="vh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>Essayer avec ma photo</label>
+<label class="simu-wish"><span>Votre souhait <small>(facultatif)</small></span><textarea rows="2" maxlength="240" placeholder="Ex. : plateau plus clair, poignées en métal noir…"></textarea></label>
+<button type="button" class="btn btn-o simu-go">Lancer la simulation</button>
 <p class="simu-status" role="status" hidden></p>
-<a class="btn btn-o simu-cta" href="devis/"><span>Demander un devis pour cette finition</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-<p class="simu-legal">Simulation numérique réalisée à partir de votre photo, à titre indicatif. Le résultat réel dépend de l’essence du bois, de l’ancien revêtement et de l’abrasif utilisé.</p>
-<p class="simu-priv"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Votre photo reste sur votre appareil tant que vous n’envoyez pas de demande de devis.</p>
+<a class="btn btn-ghost simu-cta" href="devis/"><span>Demander un devis pour ce résultat</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<input name="site" class="vh" tabindex="-1" autocomplete="off" aria-hidden="true">
+<p class="simu-legal">Simulation réalisée par intelligence artificielle à partir de votre photo, à titre indicatif. Le résultat réel dépend de l’essence du bois, de l’ancien revêtement et de l’abrasif utilisé.</p>
+<p class="simu-priv"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Votre photo sert uniquement à créer la simulation : elle est envoyée à notre prestataire d’IA, n’est pas publiée et n’est pas conservée par Alp’Aero.</p>
 </div></div></div></section>
 
 <section class="sec transform"><div class="wrap">
@@ -127,12 +129,16 @@
 <section class="sec quote grain"><img class="quote-bg" src="assets/img/chalet-pierre-1000.webp" srcset="assets/img/chalet-pierre-1000.webp 1000w, assets/img/chalet-pierre-2000.webp 2000w" sizes="100vw" width="1000" height="750" alt="" loading="lazy" decoding="async"><div class="wrap quote-in">
 <div><p class="k">Prêt à démarrer ?</p><h2>Votre devis gratuit <em>en 24h</em></h2><p>Décrivez votre projet, envoyez quelques photos et nous vous répondons rapidement avec une estimation détaillée.</p>
 <a class="big-tel" href="tel:+33610508982"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h3l1.5 4-2 1.3a11 11 0 0 0 6.1 6.1l1.3-2 4 1.5v3A2 2 0 0 1 18.4 20 15.4 15.4 0 0 1 4 5.6a2 2 0 0 1 2.6-2.1z"/></svg>06 10 50 89 82</a></div>
-<div class="card"><h3>Demande de devis rapide</h3><form class="form" data-form novalidate>
+<div class="card"><h3>Demande de devis rapide</h3><form class="form" data-form novalidate action="/api/devis" method="post">
 <div class="f2"><label>Prénom<input name="prenom" autocomplete="given-name" required></label><label>Nom<input name="nom" autocomplete="family-name" ></label></div>
 <div class="f2"><label>Téléphone *<input name="telephone" type="tel" autocomplete="tel" inputmode="tel" required></label></div>
 
 <label>Description du projet *<textarea name="description" rows="4" placeholder="Type de surface, dimensions, état actuel…" required></textarea></label>
-
+<div class="f-simu" hidden></div>
+<label class="f-photos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg><span><b>Ajouter des photos</b><small data-photo-hint>Facultatif · jusqu’à 6 photos, elles nous aident à chiffrer précisément</small></span><input type="file" name="photos" accept="image/*" multiple class="vh"></label>
+<div class="f-thumbs" hidden></div>
+<input type="hidden" name="finition"><input type="hidden" name="t">
+<label class="vh" aria-hidden="true">Ne pas remplir<input name="site" tabindex="-1" autocomplete="off"></label>
 <button class="btn btn-o" type="submit">Envoyer ma demande <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
 <p class="f-msg" role="status" hidden></p></form></div>
 </div></section></main><footer class="ft grain"><div class="wrap">

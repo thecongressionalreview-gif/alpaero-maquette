@@ -128,7 +128,10 @@ self.onmessage = (e) => {
       }
       results[key] = out.buffer; transfer.push(out.buffer);
     }
-    self.postMessage({ id, ok: true, coverage, ms: Date.now() - t0, results }, transfer);
+    // masque bois (0–255) : envoyé à l’IA pour qu’elle ne retouche que le bois
+    const maskOut = new Uint8Array(n); for (let i = 0; i < n; i++) maskOut[i] = Math.round(alpha[i] * 255);
+    transfer.push(maskOut.buffer);
+    self.postMessage({ id, ok: true, coverage, ms: Date.now() - t0, results, mask: maskOut.buffer }, transfer);
   } catch (err) {
     self.postMessage({ id, ok: false, error: String(err && err.message || err) });
   }

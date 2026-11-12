@@ -384,3 +384,42 @@ mark{background:#fde6c8;padding:0 4px;border-radius:3px}
 @media (max-width:900px){.simu-box{grid-template-columns:1fr}.simu-ba{width:min(100%,calc(62svh * var(--ar,4/3)))}}
 [data-simu].is-photo .simu-cap{display:none}
 .simu.alt{background:var(--paper)}
+
+/* ---------- formulaire : photos + simulation jointe ---------- */
+.f-photos{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px dashed var(--line);border-radius:12px;cursor:pointer;transition:border-color .2s,background .2s}
+.f-photos:hover,.f-photos:focus-within{border-color:var(--orange);background:rgba(29,106,176,.04)}
+.f-photos svg{flex:none;width:26px;height:26px;fill:none;stroke:var(--orange);stroke-width:1.7}
+.f-photos b{display:block;font-weight:600}
+.f-photos small{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
+.f-thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.f-thumbs span{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;background:var(--paper-2)}
+.f-thumbs img{width:100%;height:100%;object-fit:cover}
+.f-thumbs button,.f-simu button{position:absolute;top:4px;right:4px;width:24px;height:24px;border:0;border-radius:50%;background:rgba(20,26,34,.75);color:#fff;font-size:12px;line-height:24px;cursor:pointer}
+.f-simu{position:relative;display:flex;align-items:center;gap:10px;padding:10px 40px 10px 10px;border-radius:12px;background:var(--paper-2)}
+.f-simu img{width:64px;height:64px;border-radius:8px;object-fit:cover}
+.f-simu p{margin:0;font-size:.85rem;line-height:1.35}.f-simu b{display:block}.f-simu span{color:var(--muted)}
+.form button[type=submit][disabled]{opacity:.6;cursor:progress}
+.form label.f-photos{font:400 .95rem/1.35 var(--sans);letter-spacing:normal;text-transform:none;color:var(--ink)}
+.form label.f-photos small{font-family:var(--sans);letter-spacing:normal;text-transform:none}
+
+/* ---------- simulateur v2 : une seule image + souhait + IA ---------- */
+.simu-view{margin:0;width:100%}
+.simu-stage{position:relative;aspect-ratio:var(--ar);border-radius:var(--r);overflow:hidden;background:#cfd5d9;box-shadow:0 30px 60px -30px rgba(20,26,34,.45)}
+.simu-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.simu-badge{position:absolute;top:14px;left:14px;padding:7px 12px;border-radius:999px;font:500 .68rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;background:rgba(20,26,34,.62);color:#fff;backdrop-filter:blur(6px);pointer-events:none}
+.simu-stage .simu-spin{flex-direction:column;gap:14px;background:rgba(20,26,34,.45)}
+.simu-stage .simu-spin::after{order:-1}
+.simu-prog{color:#fff;font:500 .85rem/1.3 var(--sans);text-align:center;padding:0 20px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+[data-simu].is-busy .simu-stage .simu-spin{display:flex;align-items:center;justify-content:center}
+.simu-side .simu-up{margin-top:0;margin-bottom:18px}
+.simu-wish{display:grid;gap:6px;margin-top:16px;font:500 .72rem/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.simu-wish small{text-transform:none;letter-spacing:0;font-family:var(--sans)}
+.simu-wish textarea{font:400 .95rem/1.4 var(--sans);letter-spacing:normal;text-transform:none;color:var(--ink);padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--card);resize:vertical;min-height:62px}
+.simu-wish textarea:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(29,106,176,.18)}
+.simu-go{width:100%;justify-content:center;margin-top:12px}
+.simu-go[disabled]{opacity:.6;cursor:progress}
+[data-simu]:not(.is-photo) .simu-go,[data-simu]:not(.is-photo) .simu-wish{display:none}
+.simu-side .simu-cta{width:100%;justify-content:center;margin-top:10px}
+@media (max-width:900px){.simu-view{width:min(100%,calc(62svh * var(--ar,4/3)));margin-inline:auto}}
+.simu .simu-cta{border:1.5px solid var(--ink);color:var(--ink);background:transparent;backdrop-filter:none}
+.simu .simu-cta:hover{background:var(--ink);color:var(--paper)}
