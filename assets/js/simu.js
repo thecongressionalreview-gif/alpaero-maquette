@@ -24,6 +24,9 @@
     const $ = (s) => root.querySelector(s);
     const view = $('.simu-img'), badge = $('.simu-badge'), prog = $('.simu-prog'), input = $('input[type=file]');
     const status = $('.simu-status'), cta = $('.simu-cta'), grid = $('.simu-fin'), wishBox = $('textarea'), go = $('.simu-go');
+    const goT = $('.simu-go-t'), upT = $('.simu-up-t'), count = $('.simu-count');
+    let PH = {}; try { PH = JSON.parse(root.dataset.ph || '{}'); } catch (e) {}
+    const setGo = (t) => { goT.textContent = t; };
     const loadedAt = Date.now();
     let current = DEFAUT, mode = 'demo';           // demo | photo
     let photo = null;                              // { url, w, h, canvas } à MAX_EDGE
@@ -36,7 +39,7 @@
 
     const say = (msg, kind) => { status.textContent = msg || ''; status.hidden = !msg; status.className = 'simu-status' + (kind ? ' is-' + kind : ''); };
     const show = (url, label) => { if (url) { view.src = url; shown = url; } badge.textContent = label; };
-    const wish = () => (wishBox.value || '').trim().slice(0, 240);
+    const wish = () => (wishBox.value || '').trim().slice(0, 400);
     const aiKey = () => current + '|' + wish();
     const setCta = () => {
       const u = new URL(cta.getAttribute('href'), location.href);
@@ -46,16 +49,28 @@
     };
     const refresh = () => {
       grid.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.k === current)));
+      if (PH[current]) wishBox.placeholder = PH[current];
+      if (mode === 'demo') setGo('Choisir ma photo pour lancer');
       setCta();
       const f = FINITIONS[current].label;
       if (mode === 'demo') { if (local[current]) show(local[current], 'Exemple · ' + f); return; }
-      if (ai[aiKey()]) { show(ai[aiKey()], 'Simulation · ' + f); go.textContent = 'Relancer la simulation'; return; }
-      go.textContent = 'Lancer la simulation';
+      if (ai[aiKey()]) { show(ai[aiKey()], 'Simulation · ' + f); setGo('Relancer la simulation'); return; }
+      setGo('Lancer la simulation');
       if (localOk && local[current]) show(local[current], 'Aperçu rapide · ' + f);
       else show(photo.url, 'Votre photo');
     };
     grid.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; current = b.dataset.k; refresh(); });
-    wishBox.addEventListener('input', () => { if (mode === 'photo') refresh(); });
+    const counted = () => { const n = wishBox.value.length; count.textContent = n + ' / 400'; count.classList.toggle('is-near', n > 360); };
+    wishBox.addEventListener('input', () => { counted(); if (mode === 'photo') refresh(); });
+    // idées rapides : ajoutées au souhait
+    root.querySelectorAll('.simu-chips button').forEach((b) => b.addEventListener('click', () => {
+      const idea = b.textContent.replace(/^\+\s*/, '');
+      const cur = wishBox.value.trim();
+      if (cur.toLowerCase().includes(idea.toLowerCase())) return;
+      wishBox.value = (cur ? cur.replace(/[.,;\s]*$/, '') + ', ' : '') + idea.charAt(0).toLowerCase() + idea.slice(1);
+      if (!cur) wishBox.value = idea;
+      b.classList.add('is-on'); counted(); if (mode === 'photo') refresh(); wishBox.focus();
+    }));
 
     /* ---- calcul local (masque + aperçus) ---- */
     const load = (src) => new Promise((ok, ko) => { const im = new Image(); im.decoding = 'async'; im.onload = () => ok(im); im.onerror = ko; im.src = src; });
@@ -88,7 +103,7 @@
       if (!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|heic|heif)$/i.test(f.name)) { say('Choisissez une photo (JPEG, PNG…).', 'err'); return; }
       const url = URL.createObjectURL(f);
       let im; try { im = await load(url); } catch (e) { say('Cette photo n’a pas pu être ouverte sur cet appareil. Essayez une photo JPEG.', 'err'); return; }
-      mode = 'photo'; root.classList.add('is-photo');
+      mode = 'photo'; root.classList.add('is-photo'); upT.textContent = 'Changer de photo';
       Object.values(local).forEach((u) => URL.revokeObjectURL(u)); Object.keys(ai).forEach((k) => { URL.revokeObjectURL(ai[k]); delete ai[k]; });
       local = {}; mask = null; localOk = false;
       setAr(im.naturalWidth, im.naturalHeight); show(url, 'Votre photo');
@@ -166,7 +181,7 @@
     });
 
     /* ---- exemple au chargement ---- */
-    go.textContent = 'Lancer la simulation';
+    setGo('Choisir ma photo pour lancer');
     (async () => {
       try {
         const im = await load(root.dataset.demo);

@@ -423,3 +423,31 @@ mark{background:#fde6c8;padding:0 4px;border-radius:3px}
 @media (max-width:900px){.simu-view{width:min(100%,calc(62svh * var(--ar,4/3)));margin-inline:auto}}
 .simu .simu-cta{border:1.5px solid var(--ink);color:var(--ink);background:transparent;backdrop-filter:none}
 .simu .simu-cta:hover{background:var(--ink);color:var(--paper)}
+
+/* ---------- simulateur v3 : panneau en 3 étapes, grand champ « souhait », idées rapides ---------- */
+.simu-box{grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr)}
+.simu-side{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2.4vw,28px);box-shadow:0 20px 50px -35px rgba(20,26,34,.35)}
+.simu-step+.simu-step{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.simu-side .simu-k{display:flex;align-items:center;gap:10px;margin:0 0 12px;font:600 .8rem/1.2 var(--sans);letter-spacing:.02em;text-transform:none;color:var(--ink)}
+.simu-side .simu-k span{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font:600 .75rem/1 var(--sans)}
+.simu-side .simu-k small{font-weight:400;color:var(--muted);font-size:.78rem}
+.simu-side .simu-up{margin:0;width:100%}
+[data-simu]:not(.is-photo) .simu-go,[data-simu]:not(.is-photo) .simu-wish{display:block}
+[data-simu]:not(.is-photo) .simu-go{display:inline-flex}
+.simu-side .simu-wish{position:relative;display:block;margin:0}
+.simu-side .simu-wish textarea{display:block;width:100%;min-height:132px;padding:14px 14px 30px;font:400 1rem/1.5 var(--sans);color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:14px;resize:vertical;transition:border-color .2s,box-shadow .2s,background .2s}
+.simu-side .simu-wish textarea::placeholder{color:#8a95a0;font-style:italic}
+.simu-side .simu-wish textarea:focus{outline:none;background:#fff;border-color:var(--orange);box-shadow:0 0 0 4px rgba(29,106,176,.14)}
+.simu-count{position:absolute;right:12px;bottom:9px;font:500 .7rem/1 var(--mono);color:var(--muted);pointer-events:none}
+.simu-count.is-near{color:#a4321d}
+.simu-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.simu-chips button{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--card);font:500 .78rem/1.1 var(--sans);color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+.simu-chips button:hover{border-color:var(--orange);color:var(--orange)}
+.simu-chips button.is-on{background:var(--orange);border-color:var(--orange);color:#fff}
+.simu-side .simu-go{width:100%;justify-content:center;margin-top:20px;min-height:54px;font-size:1rem}
+.simu-side .simu-go svg{width:18px;height:18px}
+.simu .simu-cta{width:100%;justify-content:center;margin-top:10px;border:1.5px solid var(--ink);color:var(--ink);background:transparent}
+.simu .simu-cta:hover{background:var(--ink);color:var(--paper)}
+.simu-side .simu-legal{margin-top:18px}
+@media (max-width:900px){.simu-box{grid-template-columns:1fr}.simu-side{padding:18px}}
+.simu-chips button.is-on,.simu-chips button.is-on:hover{background:var(--orange);border-color:var(--orange);color:#fff}
