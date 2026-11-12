@@ -344,3 +344,43 @@ mark{background:#fde6c8;padding:0 4px;border-radius:3px}
   .js .reveal{opacity:1;transform:none}
 }
 .map svg{overflow:hidden}
+
+/* Palette retenue : Ardoise (bleu acier), choisie par Nico le 12/11/2026 */
+:root{--ink:#141a22;--slate:#1a2330;--slate-2:#25313f;--paper:#f0f2f1;--paper-2:#e2e6e7;--card:#fafbfb;--wood:#9fb4c7;--wood-2:#557089;--orange:#1d6ab0;--orange-d:#155087;--muted:#5b6570;--line:rgba(20,26,34,.14);--on-dark:#e8edf2;--on-dark-m:#9eabb8;--line-d:rgba(232,237,242,.16);--serif:Manrope,system-ui,sans-serif}
+:root .hd:not(.over){background:rgba(240,242,241,.86)}:root .hd.over.stuck{background:rgba(20,26,34,.82)}:root body:not(.p-home) .hd{background:rgba(26,35,48,.82)}
+:root .hero{background:#141a22}:root .hero::before{background:linear-gradient(180deg,rgba(20,26,34,.55) 0%,rgba(20,26,34,0) 26%,rgba(20,26,34,.08) 45%,rgba(20,26,34,.82) 100%),linear-gradient(90deg,rgba(20,26,34,.55),rgba(20,26,34,0) 65%)}
+:root .ba-tr{background:rgba(29,106,176,.9)}:root .m-zone{fill:rgba(29,106,176,.06);stroke:rgba(29,106,176,.35)}:root .m-zone2{fill:rgba(29,106,176,.08)}:root .form input:focus,:root .form select:focus,:root .form textarea:focus{box-shadow:0 0 0 3px rgba(29,106,176,.18)}
+:root .grain .num{color:#72b2ee}:root .grain h1 em,:root .grain h2 em{color:#9fb4c7}
+:root h1,:root h2,:root h3{letter-spacing:-.025em}:root h1 em,:root h2 em,:root .ft-big em{font-style:normal;font-weight:500}
+
+/* ---------- simulateur d'aérogommage ---------- */
+.simu{background:var(--paper-2)}
+.simu-box{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:clamp(24px,4vw,56px);align-items:start}
+.simu-ba{width:100%;margin:0}
+.simu .ba-stage img{transition:opacity .25s}
+.simu-cap{margin-top:10px;font-size:.85rem;color:var(--muted)}
+.simu-k{font:500 .72rem/1.3 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.simu-fin{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.simu-fin button{display:flex;align-items:center;gap:10px;min-height:58px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-align:left;font:inherit;color:var(--ink);cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.simu-fin button:hover{border-color:var(--wood-2)}
+.simu-fin button[aria-pressed="true"]{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange)}
+.simu-fin i{flex:none;width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.simu-fin b{display:block;font-weight:600;font-size:.92rem;line-height:1.2}
+.simu-fin small{display:block;font-size:.76rem;color:var(--muted);line-height:1.25;margin-top:2px}
+.simu-up{width:100%;justify-content:center;margin-top:16px;cursor:pointer;position:relative}
+.simu-up svg{width:20px;height:20px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:1.8}
+.simu-up:focus-within{outline:2px solid var(--orange);outline-offset:3px}
+.vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.simu-cta{width:100%;justify-content:center;margin-top:10px}
+.simu-status{margin:12px 0 0;font-size:.9rem;color:var(--muted)}
+.simu-status.is-err{color:#a4321d;background:#fbe9e4;padding:10px 12px;border-radius:10px}
+.simu-legal{margin:16px 0 0;font-size:.78rem;line-height:1.45;color:var(--muted)}
+.simu-priv{display:flex;gap:8px;align-items:flex-start;margin:8px 0 0;font-size:.78rem;line-height:1.45;color:var(--muted)}
+.simu-priv svg{flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;margin-top:1px}
+.simu-spin{position:absolute;inset:0;display:none;place-items:center;background:rgba(20,26,34,.35);pointer-events:none}
+.simu-spin::after{content:"";width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:simu-rot .8s linear infinite}
+.simu.is-busy .simu-spin,[data-simu].is-busy .simu-spin{display:grid}
+@keyframes simu-rot{to{transform:rotate(1turn)}}
+@media (max-width:900px){.simu-box{grid-template-columns:1fr}.simu-ba{width:min(100%,calc(62svh * var(--ar,4/3)))}}
+[data-simu].is-photo .simu-cap{display:none}
+.simu.alt{background:var(--paper)}

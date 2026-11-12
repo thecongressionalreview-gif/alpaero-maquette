@@ -93,6 +93,22 @@
     lb.addEventListener('click', e => { if (e.target === lb || e.target.closest('.lb-x')) lb.close(); });
   }
 
+  // simulateur : script et worker chargés seulement quand la section approche
+  const simus = $$('[data-simu]');
+  if (simus.length) {
+    let loaded = false;
+    const go = () => { if (loaded) return; loaded = true; const sc = document.createElement('script'); sc.src = simus[0].dataset.src; sc.defer = true; document.body.appendChild(sc); };
+    if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '600px 0px' }); simus.forEach(x => io.observe(x)); } else go();
+  }
+  // devis : pré-remplissage depuis le simulateur (?finition=…&simulation=photo|demo)
+  const qp = new URLSearchParams(location.search), fin = qp.get('finition');
+  if (fin) $$('[data-form]').forEach(f => {
+    const ta = f.querySelector('textarea[name=description]'), sel = f.querySelector('select[name=prestation]');
+    if (ta && !ta.value) ta.value = 'Simulation faite sur le site : finition souhaitée « ' + fin + ' ».' + (qp.get('simulation') === 'photo' ? ' Je joins la photo de mon bois à cet email.' : '') + '\n\nMon projet : ';
+    const want = qp.get('prestation') || 'Aérogommage de meubles';
+    if (sel) [...sel.options].forEach(o => { if (o.text === want) sel.value = o.value || o.text; });
+  });
+
   // forms: validate; send to endpoint if set, else open the visitor's mail app pre-filled
   $$('[data-form]').forEach(f => f.addEventListener('submit', async e => {
     e.preventDefault();
