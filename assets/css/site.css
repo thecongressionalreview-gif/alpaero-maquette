@@ -456,3 +456,14 @@ mark{background:#fde6c8;padding:0 4px;border-radius:3px}
 .simu-orig[hidden]{display:none}
 [data-simu].is-photo .simu-cap>span{display:none}
 [data-simu].is-photo .simu-cap{display:flex}
+
+/* ---------- simulateur : bloc unique à onglets (--layout=tabs) + conseil photo ---------- */
+.simu-tabs{display:flex;justify-content:center;gap:6px;margin:-20px auto 30px;padding:5px;width:max-content;max-width:100%;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:0 10px 30px -22px rgba(20,26,34,.4)}
+.simu-tabs button{display:flex;align-items:center;gap:8px;padding:11px 20px;border:0;border-radius:999px;background:none;font:600 .95rem/1 var(--sans);color:var(--muted);cursor:pointer;transition:background .2s,color .2s}
+.simu-tabs button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.simu-tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.simu-tabs button:not([aria-selected="true"]):hover{color:var(--ink)}
+.simu-panel[hidden]{display:none}
+.simu-lead{max-width:62ch;margin:0 auto 26px;text-align:center;color:var(--muted)}
+.simu-tip{margin:10px 0 0;font-size:.8rem;line-height:1.4;color:var(--muted)}
+@media (max-width:520px){.simu-tabs{width:100%}.simu-tabs button{flex:1;justify-content:center;padding:11px 10px;font-size:.88rem}}

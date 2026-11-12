@@ -100,6 +100,21 @@
     const go = () => { if (loaded) return; loaded = true; const sc = document.createElement('script'); sc.src = simus[0].dataset.src; sc.defer = true; document.body.appendChild(sc); };
     if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '600px 0px' }); simus.forEach(x => io.observe(x)); } else go();
   }
+  // simulateur à onglets (Chalet / Meuble)
+  const tabs = $$('.simu-tabs [role=tab]');
+  if (tabs.length) {
+    const pick = (t, focus) => {
+      tabs.forEach(x => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; const p = document.getElementById(x.getAttribute('aria-controls')); if (p) p.hidden = !on; });
+      if (focus) t.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => pick(t));
+      t.addEventListener('keydown', e => { const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (d) { e.preventDefault(); pick(tabs[(i + d + tabs.length) % tabs.length], true); } });
+    });
+    const fromHash = tabs.find(t => '#' + t.getAttribute('aria-controls') === location.hash);
+    if (fromHash) pick(fromHash);
+  }
+
   // devis : pré-remplissage depuis le simulateur (?finition=…&simulation=photo|demo)
   const qp = new URLSearchParams(location.search), fin = qp.get('finition');
   // photo de la simulation (déposée par simu.js en sessionStorage quand le visiteur clique « Demander un devis »)
