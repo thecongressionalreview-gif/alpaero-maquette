@@ -7,7 +7,8 @@ const CFG = {
   // masque bois (convention OpenCV : H 0–179, S et V 0–255)
   hueMin: 8, hueMax: 30, satMin: 95, valMin: 95,
   hueWindow: 12,            // teinte adaptative : ± autour de la teinte dominante au centre
-  shadeSatMin: 70, shadeValMin: 45, // bois à l'ombre (accepté seulement s'il touche du bois net)
+  shadeSatMin: 55, shadeValMin: 40, // bois à l'ombre (accepté seulement s'il touche du bois net)
+  crimsonMin: 168,          // vernis rouge-violacé (bois rouge seulement), accepté seulement s'il touche du bois net
   minPartFrac: 0.004,       // zones de bois gardées : ≥ 0,4 % de l'image, et ≥ 8 % de la plus grande
   centerFrac: 0.4,          // zone centrale échantillonnée (40 %)
   minCoverage: 0.12, maxCoverage: 0.92,
@@ -70,7 +71,10 @@ self.onmessage = (e) => {
     const core = new Uint8Array(n), ext = new Uint8Array(n);
     for (let i = 0; i < n; i++) {
       if (S[i] > CFG.satMin && V[i] > CFG.valMin && hueOk(H[i], 0)) core[i] = 1;
-      if (S[i] > CFG.shadeSatMin && V[i] > CFG.shadeValMin && hueOk(H[i], 4)) ext[i] = 1;
+      // extension : bois à l'ombre, et teintes cramoisies (vernis rouge un peu violacé, H 170–179)
+      // — gardées uniquement si elles touchent du bois net (un tissu rose isolé n'est jamais touché)
+      const crimson = H[i] >= CFG.crimsonMin && hue0 <= 14;
+      if (S[i] > CFG.shadeSatMin && V[i] > CFG.shadeValMin && (hueOk(H[i], 4) || crimson)) ext[i] = 1;
     }
     let m = hysteresis(ext, core, w, h);
     m = dilate(erode(m, w, h, 5), w, h, 5);      // ouverture 5×5
@@ -206,10 +210,12 @@ function bigComponents(m, w, h, minFrac) {
 // garde les zones de « ext » qui contiennent au moins un pixel de « core »
 function hysteresis(ext, core, w, h) {
   const [lab, sizes] = label(ext, w, h, 1);
-  const hit = new Uint8Array(sizes.length);
-  for (let i = 0; i < w * h; i++) if (core[i] && lab[i]) hit[lab[i]] = 1;
+  // une zone n'est gardée que si au moins 20 % de ses pixels sont du bois net :
+  // quelques clous en laiton ne suffisent pas à faire passer un tissu rose pour du bois
+  const hit = new Uint32Array(sizes.length);
+  for (let i = 0; i < w * h; i++) if (core[i] && lab[i]) hit[lab[i]]++;
   const o = new Uint8Array(w * h);
-  for (let i = 0; i < w * h; i++) o[i] = hit[lab[i]] ? 1 : 0;
+  for (let i = 0; i < w * h; i++) { const k = lab[i]; o[i] = k && hit[k] >= sizes[k] * 0.2 ? 1 : 0; }
   return o;
 }
 function fillHoles(m, w, h, maxArea) {
