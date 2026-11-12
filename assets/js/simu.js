@@ -136,8 +136,12 @@
       say('');
       try {
         const body = new FormData();
-        body.append('image', await new Promise((r) => photo.canvas.toBlob(r, 'image/jpeg', 0.9)), 'photo.jpg');
-        if (localOk && mask) body.append('mask', await maskPng(), 'mask.png');
+        // le modèle ne produit que du 3:2, 1:1 ou 2:3 : on complète la photo (bords flous) au bon format,
+        // puis on recadre le résultat exactement sur la photo d'origine. Pas de masque : avec ce type de modèle,
+        // un masque l'autorise à redessiner toute la zone (il reconstruisait la façade).
+        const pad = padForAI(photo.canvas);
+        body.append('image', await new Promise((r) => pad.canvas.toBlob(r, 'image/jpeg', 0.92)), 'photo.jpg');
+        body.append('size', pad.size);
         body.append('finition', current); body.append('souhait', wish());
         body.append('prestation', root.dataset.prestation || ''); body.append('t', String(loadedAt));
         body.append('site', ($('input[name=site]') || {}).value || '');
@@ -147,7 +151,7 @@
         const b64 = j && j.data && j.data[0] && j.data[0].b64_json;
         if (!r.ok || !b64) throw new Error(j.error || 'http' + r.status);
         const bin = atob(b64), a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
-        ai[key] = URL.createObjectURL(new Blob([a], { type: 'image/jpeg' }));
+        ai[key] = await cropBack(URL.createObjectURL(new Blob([a], { type: 'image/jpeg' })), pad);
         const im2 = await load(ai[key]); setAr(im2.naturalWidth, im2.naturalHeight);
         refresh();
         say('Voici votre simulation. Changez de finition ou précisez votre souhait pour en essayer une autre.');
@@ -166,6 +170,24 @@
         clearInterval(tick); root.classList.remove('is-busy'); go.disabled = false;
       }
     });
+    function padForAI(src) {
+      const sizes = [[1536, 1024], [1024, 1024], [1024, 1536]], ar = src.width / src.height;
+      const [W, H] = sizes.reduce((b, t) => (Math.abs(Math.log(t[0] / t[1] / ar)) < Math.abs(Math.log(b[0] / b[1] / ar)) ? t : b));
+      const k = Math.min(W / src.width, H / src.height), w = Math.round(src.width * k), h = Math.round(src.height * k);
+      const x = Math.round((W - w) / 2), y = Math.round((H - h) / 2);
+      const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+      g.filter = 'blur(24px)'; g.drawImage(src, -40, -40, W + 80, H + 80); g.filter = 'none';
+      g.drawImage(src, x, y, w, h);
+      return { canvas: c, size: W + 'x' + H, W, H, box: { x, y, w, h } };
+    }
+    async function cropBack(url, pad) {
+      const im = await load(url);
+      const sx = im.naturalWidth / pad.W, sy = im.naturalHeight / pad.H, b = pad.box;
+      const c = document.createElement('canvas'); c.width = Math.round(b.w * sx); c.height = Math.round(b.h * sy);
+      c.getContext('2d').drawImage(im, b.x * sx, b.y * sy, b.w * sx, b.h * sy, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      return URL.createObjectURL(await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.9)));
+    }
     async function maskPng() {
       const { w, h } = photo, c = document.createElement('canvas'); c.width = w; c.height = h;
       const d = new ImageData(w, h);
