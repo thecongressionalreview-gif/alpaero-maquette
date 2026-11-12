@@ -31,6 +31,7 @@
     const setGo = (t) => { goT.textContent = t; };
     const loadedAt = Date.now();
     let current = DEFAUT, mode = 'demo';           // demo | photo
+    let original = true;                           // la photo d'origine est affichée (aucune finition choisie)
     let photo = null;                              // { url, w, h, canvas } à MAX_EDGE
     let local = {}, mask = null, localOk = false;  // aperçus locaux (URL par finition) + masque bois
     const ai = {};                                 // résultats IA : clé "finition|souhait" → URL
@@ -50,23 +51,28 @@
       cta.href = u.pathname + u.search;
     };
     const refresh = () => {
-      grid.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.k === current)));
+      grid.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(!original && b.dataset.k === current)));
+      origBtn.hidden = original;
       if (PH[current]) wishBox.placeholder = PH[current];
       if (mode === 'demo') setGo('Choisir ma photo pour lancer');
       setCta();
       const f = FINITIONS[current].label;
       if (mode === 'demo') {
+        if (original && DEMOS.original) { view.removeAttribute('srcset'); show(big() ? DEMOS.original.l : DEMOS.original.s, 'Exemple · Photo d’origine'); return; }
         const d = DEMOS[current];
         if (d) { view.removeAttribute('srcset'); show(big() ? d.l : d.s, 'Exemple · ' + f); }
         else if (local[current]) show(local[current], 'Exemple · ' + f);
         return;
       }
+      if (original && photo) { show(photo.url, 'Votre photo'); setGo(ai[aiKey()] ? 'Voir la simulation' : 'Lancer la simulation'); return; }
       if (ai[aiKey()]) { show(ai[aiKey()], 'Simulation · ' + f); setGo('Relancer la simulation'); return; }
       setGo('Lancer la simulation');
       if (localOk && local[current]) show(local[current], 'Aperçu rapide · ' + f);
       else show(photo.url, 'Votre photo');
     };
-    grid.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; current = b.dataset.k; refresh(); });
+    grid.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; current = b.dataset.k; original = false; refresh(); });
+    const origBtn = $('.simu-orig');
+    origBtn.addEventListener('click', () => { original = true; refresh(); });
     const counted = () => { const n = wishBox.value.length; count.textContent = n + ' / 400'; count.classList.toggle('is-near', n > 360); };
     wishBox.addEventListener('input', () => { counted(); if (mode === 'photo') refresh(); });
     // idées rapides : ajoutées au souhait
@@ -119,7 +125,7 @@
       const r = await localRun(im);
       photo = { url, w: r.w, h: r.h, canvas: r.base };
       local = r.urls; mask = r.mask; localOk = r.ok;
-      refresh();
+      original = true; refresh();
     });
     const setAr = (w, h) => { root.style.setProperty('--ar', `${w}/${h}`); $('.simu-stage').style.setProperty('--ar', `${w}/${h}`); };
 
@@ -127,6 +133,7 @@
     go.addEventListener('click', async () => {
       if (mode !== 'photo') { input.click(); return; }
       if (!photo) { say('Un instant, la photo se prépare…'); return; }
+      original = false;
       const key = aiKey();
       if (ai[key]) { refresh(); return; }
       root.classList.add('is-busy'); go.disabled = true;

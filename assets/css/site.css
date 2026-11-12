@@ -451,3 +451,8 @@ mark{background:#fde6c8;padding:0 4px;border-radius:3px}
 .simu-side .simu-legal{margin-top:18px}
 @media (max-width:900px){.simu-box{grid-template-columns:1fr}.simu-side{padding:18px}}
 .simu-chips button.is-on,.simu-chips button.is-on:hover{background:var(--orange);border-color:var(--orange);color:#fff}
+.simu-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 14px;align-items:baseline}
+.simu-orig{border:0;background:none;padding:0;font:500 .85rem/1.3 var(--sans);color:var(--orange);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.simu-orig[hidden]{display:none}
+[data-simu].is-photo .simu-cap>span{display:none}
+[data-simu].is-photo .simu-cap{display:flex}
