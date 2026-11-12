@@ -26,6 +26,8 @@
     const status = $('.simu-status'), cta = $('.simu-cta'), grid = $('.simu-fin'), wishBox = $('textarea'), go = $('.simu-go');
     const goT = $('.simu-go-t'), upT = $('.simu-up-t'), count = $('.simu-count');
     let PH = {}; try { PH = JSON.parse(root.dataset.ph || '{}'); } catch (e) {}
+    let DEMOS = {}; try { DEMOS = JSON.parse(root.dataset.demos || '{}'); } catch (e) {}
+    const big = () => matchMedia('(min-width: 900px)').matches && devicePixelRatio > 1;
     const setGo = (t) => { goT.textContent = t; };
     const loadedAt = Date.now();
     let current = DEFAUT, mode = 'demo';           // demo | photo
@@ -53,7 +55,12 @@
       if (mode === 'demo') setGo('Choisir ma photo pour lancer');
       setCta();
       const f = FINITIONS[current].label;
-      if (mode === 'demo') { if (local[current]) show(local[current], 'Exemple · ' + f); return; }
+      if (mode === 'demo') {
+        const d = DEMOS[current];
+        if (d) { view.removeAttribute('srcset'); show(big() ? d.l : d.s, 'Exemple · ' + f); }
+        else if (local[current]) show(local[current], 'Exemple · ' + f);
+        return;
+      }
       if (ai[aiKey()]) { show(ai[aiKey()], 'Simulation · ' + f); setGo('Relancer la simulation'); return; }
       setGo('Lancer la simulation');
       if (localOk && local[current]) show(local[current], 'Aperçu rapide · ' + f);
@@ -106,7 +113,7 @@
       mode = 'photo'; root.classList.add('is-photo'); upT.textContent = 'Changer de photo';
       Object.values(local).forEach((u) => URL.revokeObjectURL(u)); Object.keys(ai).forEach((k) => { URL.revokeObjectURL(ai[k]); delete ai[k]; });
       local = {}; mask = null; localOk = false;
-      setAr(im.naturalWidth, im.naturalHeight); show(url, 'Votre photo');
+      view.removeAttribute('srcset'); setAr(im.naturalWidth, im.naturalHeight); show(url, 'Votre photo');
       say('Choisissez une finition, ajoutez votre souhait si besoin, puis lancez la simulation.');
       go.disabled = false;
       const r = await localRun(im);
@@ -183,6 +190,7 @@
     /* ---- exemple au chargement ---- */
     setGo('Choisir ma photo pour lancer');
     (async () => {
+      if (Object.keys(DEMOS).length) { refresh(); return; }
       try {
         const im = await load(root.dataset.demo);
         const r = await localRun(im);
